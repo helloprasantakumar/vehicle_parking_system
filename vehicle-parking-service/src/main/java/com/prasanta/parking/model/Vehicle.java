@@ -4,12 +4,12 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "vehicle")
+@Table(name = "vehicles")
 public class Vehicle {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "vehicle_id")
     private Long id;
 
     @Column(name = "license_plate", nullable = false, length = 20)
@@ -24,11 +24,18 @@ public class Vehicle {
     @Column(name = "exit_time")
     private LocalDateTime exitTime;
 
+    @Column(name = "user_name", length = 100)
+    private String userName;
+
+    @Column(name = "user_email", length = 100)
+    private String userEmail;
+
+    @Column(name = "user_mobile", length = 20)
+    private String userMobile;
+
     @ManyToOne
     @JoinColumn(name = "slot_id", nullable = false)
     private ParkingSlot slot;
-
-    // Getters and Setters
 
     public Long getId() {
         return id;
@@ -68,6 +75,30 @@ public class Vehicle {
 
     public void setExitTime(LocalDateTime exitTime) {
         this.exitTime = exitTime;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
+
+    public String getUserMobile() {
+        return userMobile;
+    }
+
+    public void setUserMobile(String userMobile) {
+        this.userMobile = userMobile;
     }
 
     public ParkingSlot getSlot() {

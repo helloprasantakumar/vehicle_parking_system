@@ -15,7 +15,7 @@
     <description>Vehicle Parking Service System</description>
 
     <properties>
-        <java.version>22</java.version>
+        <java.version>17</java.version>
     </properties>
 
     <dependencies>
@@ -42,10 +42,29 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
+
+        <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
             <version>8.3.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.konghq</groupId>
+            <artifactId>unirest-java</artifactId>
+            <version>3.13.10</version>
+        </dependency>
+
+
 
 
 
