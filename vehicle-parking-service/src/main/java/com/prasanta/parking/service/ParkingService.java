@@ -4,12 +4,15 @@ import com.prasanta.parking.model.ParkingSlot;
 import com.prasanta.parking.model.Vehicle;
 import com.prasanta.parking.repository.ParkingSlotRepository;
 import com.prasanta.parking.repository.VehicleRepository;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -55,20 +58,52 @@ public class ParkingService {
     private void sendExitEmail(Vehicle vehicle, long price) {
         if (vehicle.getUserEmail() == null || vehicle.getUserEmail().isBlank()) return;
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm A");
+        String formattedEntryTime = vehicle.getEntryTime().format(formatter);
+        String formattedExitTime = vehicle.getExitTime().format(formatter);
+
         String to = vehicle.getUserEmail();
         String subject = "Parking Receipt";
-        String body = "Dear " + vehicle.getUserName() + ",\n\n"
-                + "Your vehicle (" + vehicle.getLicensePlate() + ") has been unparked.\n"
-                + "Entry Time: " + vehicle.getEntryTime() + "\n"
-                + "Exit Time: " + vehicle.getExitTime() + "\n"
-                + "Total Charges: ₹" + price + "\n\n"
-                + "Thank you for using our service.";
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(body);
-        mailSender.send(message);
+        String htmlBody = """
+                    <html>
+                        <body style="font-family: Arial, sans-serif; line-height: 1.6;">
+                            <h2 style="color: #2E86C1;">Parking Receipt</h2>
+                            <p>Dear <strong>%s</strong>,</p>
+                            <p>Your vehicle <strong>%s</strong> has been successfully <span style="color:green;">UNPARKED</span>.</p>
+                            <table style="border-collapse: collapse; width: 100%%;">
+                                <tr>
+                                    <td style="padding: 8px; border: 1px solid #ddd;"><strong>Entry Time:</strong></td>
+                                    <td style="padding: 8px; border: 1px solid #ddd;">%s</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 8px; border: 1px solid #ddd;"><strong>Exit Time:</strong></td>
+                                    <td style="padding: 8px; border: 1px solid #ddd;">%s</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 8px; border: 1px solid #ddd;"><strong>Total Charges:</strong></td>
+                                    <td style="padding: 8px; border: 1px solid #ddd;">₹%d</td>
+                                </tr>
+                            </table>
+                            <p style="margin-top: 20px;">Thank you for using our parking service!</p>
+                        </body>
+                    </html>
+                """.formatted(vehicle.getUserName(), vehicle.getLicensePlate(), formattedEntryTime, formattedExitTime, price);
+
+        try {
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(htmlBody, true); // true = enable HTML
+
+            mailSender.send(mimeMessage);
+            System.out.println("HTML Email sent to " + to);
+
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            System.err.println("Failed to send HTML email to " + to);
+        }
     }
 
 

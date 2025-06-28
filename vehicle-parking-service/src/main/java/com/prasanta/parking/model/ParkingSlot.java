@@ -3,12 +3,12 @@ package com.prasanta.parking.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "parking_slot")
+@Table(name = "parking_slots")
 public class ParkingSlot {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "slot_id")
     private Long id;
 
     @Column(name = "slot_number", nullable = false, unique = true, length = 20)

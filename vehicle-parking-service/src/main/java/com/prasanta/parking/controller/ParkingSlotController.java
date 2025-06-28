@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/parking/slots")
+@RequestMapping("/api/parking/slot-management")  // ✅ Unique base path
 public class ParkingSlotController {
 
     private final ParkingService parkingService;
@@ -16,12 +16,12 @@ public class ParkingSlotController {
         this.parkingService = parkingService;
     }
 
-    @GetMapping
+    @GetMapping("/all")  // ✅ Avoids conflict
     public List<ParkingSlot> getAllSlots() {
         return parkingService.getAllSlots();
     }
 
-    @PostMapping
+    @PostMapping("/add")  // ✅ Avoids conflict
     public ParkingSlot addSlot(@RequestBody ParkingSlot slot) {
         return parkingService.addSlot(slot);
     }

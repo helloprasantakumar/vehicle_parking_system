@@ -16,12 +16,12 @@ public class VehicleController {
         this.parkingService = parkingService;
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public List<Vehicle> getAllVehicles() {
         return parkingService.getAllVehicles();
     }
 
-    @PostMapping
+    @PostMapping("/add")
     public Vehicle parkVehicle(@RequestBody Vehicle vehicle) {
         return parkingService.parkVehicle(vehicle);
     }
